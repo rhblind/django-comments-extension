@@ -13,17 +13,6 @@ class CommentEditFormNode(CommentFormNode):
     """
     Insert a form for the comment model into the context.
     """
-#    def get_form(self, context):
-#        obj = self.get_object(context)
-#        if obj:
-#            form = comments.get_form()(obj)
-#            for k in form.fields.iterkeys():
-#                if k not in form.initial and hasattr(obj, k):
-#                    form.initial.update({k: getattr(obj, k)})
-#            return form
-#        else:
-#            return None
-
     def get_form(self, context):
         obj = self.get_object(context)
         if obj:
