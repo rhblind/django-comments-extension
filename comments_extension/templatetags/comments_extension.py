@@ -96,6 +96,6 @@ def comment_edit_form_target(comment):
 
     Example::
 
-        <form action="{% comment_edit_form_target %}" method="post">
+        <form action="{% comment_edit_form_target comment %}" method="post">
     """
     return comments_extension.get_edit_form_target(comment)
