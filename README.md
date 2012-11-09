@@ -1,1 +1,77 @@
-###django-comments-extension###
+## django-comments-extension ##
+
+A portable app to put extensions for the django comments framework in.
+
+
+As I needed the ability to edit comments in a project I'm working on, I decided to build an extension to the built-in 
+comments framework in Django. I have tried to follow the conventions already in the comments framework, and make it
+as clean as possible, but there's always room for improvement.
+
+### List of extensions ###
+Currently there's only one extension in this app.
+
+* edit
+
+## Installation ##
+
+    $ git clone https://github.com/rhblind/django-comments-extension.git
+
+I have not yet created installation scripts, so you need to manually copy the comments_extension directory into your
+PYTHON_PATH.
+
+### settings.py ###
+
+    INSTALLED_APPS = (
+        ...,
+        'comments_extension',
+        ...
+    )
+
+### urls.py ###
+
+    urlpatterns = patterns("",
+        ...
+        url(r"^comments/", include("django.contrib.comments.urls")),
+        url(r"^comments/", include("comments_extension.urls")),
+        ...
+    )
+
+### templates ###
+Use as you would normally use the comments framework
+
+    {% load comments %}
+    {% load comments_extension %}
+
+    {% get_comment_list for mymodel as comment_list %}
+    {% for msg in comment_list %}
+        <h1>Your comment here</h1>        
+        {{ msg.comment }}
+        
+        <h3>Your edit form</h3>
+
+        <!-- Load the comment edit form for this message into the form variable -->
+        {% get_comment_edit_form for msg as form %}
+
+        <table>
+            <!-- Make sure to pass the `msg` variable into the `comment_edit_form_target`
+                 variable to get the edit url for this comment -->
+            <form action="{% comment_edit_form_target msg %}" method="post">
+            {% csrf_token %}
+                {{ form }}
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" name="submit" value="Post">
+                        <input type="submit" name="preview" value="Preview">
+                    </td>
+                </tr>
+            </form>
+        </table>
+
+    {% endfor %}
+
+
+        
+    
+    
+
+
