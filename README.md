@@ -43,19 +43,19 @@ Use as you would normally use the comments framework
     {% load comments_extension %}
 
     {% get_comment_list for mymodel as comment_list %}
-    {% for msg in comment_list %}
+    {% for comment_obj in comment_list %}
         <h1>Your comment here</h1>        
-        {{ msg.comment }}
+        {{ comment_obj.comment }}
         
         <h3>Your edit form</h3>
 
         <!-- Load the comment edit form for this message into the form variable -->
-        {% get_comment_edit_form for msg as form %}
+        {% get_comment_edit_form for comment_obj as form %}
 
         <table>
             <!-- Make sure to pass the `msg` variable into the `comment_edit_form_target`
                  variable to get the edit url for this comment -->
-            <form action="{% comment_edit_form_target msg %}" method="post">
+            <form action="{% comment_edit_form_target comment_obj %}" method="post">
             {% csrf_token %}
                 {{ form }}
                 <tr>
@@ -66,7 +66,6 @@ Use as you would normally use the comments framework
                 </tr>
             </form>
         </table>
-
     {% endfor %}
 
 
