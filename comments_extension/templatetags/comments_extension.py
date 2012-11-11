@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.contrib.comments.templatetags.comments import CommentFormNode,\
     BaseCommentNode
 import comments_extension
+from django.contrib.contenttypes.models import ContentType
 
 
 register = template.Library()
@@ -45,12 +46,19 @@ class RenderCommentEditFormNode(CommentFormNode):
                 object_pk_expr = parser.compile_filter(tokens[3])
             )
     
+    def get_target_ctype_pk(self, context):
+        try:
+            obj = self.object_expr.resolve(context)
+        except template.VariableDoesNotExist:
+            return None, None
+        return obj.content_type, obj.pk
+    
     def render(self, context):
         ctype, object_pk = self.get_target_ctype_pk(context)
         if object_pk:
             template_search_list = [
                 "comments/%s/%s/edit.html" % (ctype.app_label, ctype.model),
-                "comments/%s/edit.html" % ctype.app_label,
+                "comments/%s/edit.html" % ctype.model,
                 "comments/edit.html"
             ]
             context.push()
