@@ -54,7 +54,7 @@ Use as you would normally use the comments framework
 
         <table>
             <!-- Make sure to pass the `comment_obj` variable into the `comment_edit_form_target`
-                 variable to get the correct edit url for this comment -->
+                 tag to get the correct edit url for this comment -->
             <form action="{% comment_edit_form_target comment_obj %}" method="post">
             {% csrf_token %}
                 {{ form }}
