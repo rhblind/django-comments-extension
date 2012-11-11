@@ -16,8 +16,9 @@ Currently there's only one extension in this app.
 
     $ git clone https://github.com/rhblind/django-comments-extension.git
 
-I have not yet created installation scripts, so you need to manually copy the comments_extension directory into your
-PYTHON_PATH.
+or install from the python package index
+    
+    $ pip install django-comments-extension
 
 ### settings.py ###
 
