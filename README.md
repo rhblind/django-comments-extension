@@ -53,8 +53,8 @@ Use as you would normally use the comments framework
         {% get_comment_edit_form for comment_obj as form %}
 
         <table>
-            <!-- Make sure to pass the `msg` variable into the `comment_edit_form_target`
-                 variable to get the edit url for this comment -->
+            <!-- Make sure to pass the `comment_obj` variable into the `comment_edit_form_target`
+                 variable to get the correct edit url for this comment -->
             <form action="{% comment_edit_form_target comment_obj %}" method="post">
             {% csrf_token %}
                 {{ form }}
