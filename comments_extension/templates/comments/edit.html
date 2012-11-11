@@ -5,7 +5,7 @@
 
 {% block content %}
     {% load comments_extension %}
-        <form action="{% comment_edit_form_target msg %}" method="post">{% csrf_token %}
+        <form action="{% comment_edit_form_target comment_obj %}" method="post">{% csrf_token %}
         {% if next %}<div><input type="hidden" name="next" value="{{ next }}" /></div>{% endif %}
         {% if form.errors %}
             <h1>{% blocktrans count counter=form.errors|length %}Please correct the error below{% plural %}Please correct the errors below{% endblocktrans %}</h1>
