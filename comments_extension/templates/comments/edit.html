@@ -11,7 +11,7 @@
             <h1>{% blocktrans count counter=form.errors|length %}Please correct the error below{% plural %}Please correct the errors below{% endblocktrans %}</h1>
         {% else %}
             <h1>{% trans "Edit your comment" %}</h1>
-            <p><blockquote>{{ msg|linebreaks }}</blockquote></p>
+            <p><blockquote>{{ comment_obj|linebreaks }}</blockquote></p>
         {% endif %}
         {% for field in form %}
             {% if field.is_hidden %}
