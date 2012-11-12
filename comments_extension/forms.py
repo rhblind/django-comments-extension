@@ -29,7 +29,7 @@ class CommentEditForm(forms.ModelForm):
     user_url = forms.URLField(label=_("URL"), required=False)
     comment = forms.CharField(label=_("Comment"), widget=forms.Textarea,
                                     max_length=COMMENT_MAX_LENGTH)
-    is_public = forms.BooleanField(label=_("Is public"),
+    is_public = forms.BooleanField(label=_("Is public"), required=False,
                                    help_text=_("Uncheck this box to make the comment "\
                                                "effectively disappear from the site."))
     
