@@ -4,7 +4,6 @@ from django.template.loader import render_to_string
 from django.contrib.comments.templatetags.comments import CommentFormNode,\
     BaseCommentNode
 import comments_extension
-from django.contrib.contenttypes.models import ContentType
 
 
 register = template.Library()
