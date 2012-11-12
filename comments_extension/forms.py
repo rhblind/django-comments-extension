@@ -29,9 +29,6 @@ class CommentEditForm(forms.ModelForm):
     user_url = forms.URLField(label=_("URL"), required=False)
     comment = forms.CharField(label=_("Comment"), widget=forms.Textarea,
                                     max_length=COMMENT_MAX_LENGTH)
-    is_public = forms.BooleanField(label=_("Is public"), required=False,
-                                   help_text=_("Uncheck this box to make the comment "\
-                                               "effectively disappear from the site."))
     
     # Security fields
     timestamp = forms.IntegerField(widget=forms.HiddenInput)
@@ -42,7 +39,7 @@ class CommentEditForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ("user_name", "user_email", "user_url", "comment",
-                  "is_public", "timestamp", "security_hash", "honeypot")
+                  "timestamp", "security_hash", "honeypot")
 
     def security_errors(self):
         """
