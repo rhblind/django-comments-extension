@@ -38,7 +38,7 @@ def edit(request, comment_id, next=None):
     
     Requires HTTP POST and "can change comments" or "can moderate comments",
     permission. Users can also only edit comments they own, unless they are
-    given "comments.change_comment" on this specific comment object.
+    granted "comments.can_moderate" permissions.
     
     If ``POST['submit'] == "preview"`` or there are errors,
     a preview template ``comments/preview.html`` will be rendered.
@@ -52,7 +52,8 @@ def edit(request, comment_id, next=None):
     
     # Make sure user has correct permissions to change the comment,
     # or return a 401 Unauthorized error.
-    if not (request.user == comment.user or request.user.has_perms(["comments.change_comment"], comment)):
+    if not (request.user == comment.user and request.user.has_perm("comments.change_comment")
+            or request.user.has_perm("comments.can_moderate")):
         return HttpResponse("Unauthorized", status=401)
     
     # Populate POST data with all required initial data
