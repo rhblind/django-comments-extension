@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
     name = "django-comments-extension",
-    version = "1.1",
+    version = "1.2",
     description = "contrib.comments extensions.",
     long_description = "Provides edit functionality to the contrib.comments framework",
     keywords = "django edit comments",
