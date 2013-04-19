@@ -112,7 +112,7 @@ def edit(request, comment_id, next=None):
             request = request
         )
         
-        return next_redirect(request.POST.copy(), next, edit_done, c=comment.pk)
+        return next_redirect(request, next, edit_done, c=comment.pk)
     
     else:
         # If we got here, raise Bad Request error.
