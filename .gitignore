@@ -16,5 +16,6 @@ _svn
 .project
 .pydevproject
 .settings
+.idea/
+dist/
 MANIFEST
-dist/*
