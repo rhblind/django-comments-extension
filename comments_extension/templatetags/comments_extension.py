@@ -1,15 +1,14 @@
 from __future__ import absolute_import
 from django import template
 from django.template.loader import render_to_string
-from django.contrib.comments.templatetags.comments import CommentFormNode,\
-    BaseCommentNode
+
 import comments_extension
 
 
 register = template.Library()
 
 
-class CommentEditFormNode(CommentFormNode):
+class CommentEditFormNode(comments_extension.django_comments.templatetags.comments.CommentFormNode):
     """
     Insert a form for the comment model into the context.
     """
@@ -21,7 +20,7 @@ class CommentEditFormNode(CommentFormNode):
             return None
         
 
-class RenderCommentEditFormNode(CommentFormNode):
+class RenderCommentEditFormNode(comments_extension.django_comments.templatetags.comments.CommentFormNode):
     """
     Class method to parse render_comment_edit_form and return a Node
     prefilled with existing data.
@@ -41,7 +40,7 @@ class RenderCommentEditFormNode(CommentFormNode):
         # {% render_comment_form for app.models pk %}
         elif len(tokens) == 4:
             return cls(
-                ctype = BaseCommentNode.lookup_content_type(tokens[2], tokens[0]),
+                ctype = comments_extension.django_comments.templatetags.comments.BaseCommentNode.lookup_content_type(tokens[2], tokens[0]),
                 object_pk_expr = parser.compile_filter(tokens[3])
             )
     

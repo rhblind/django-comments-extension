@@ -3,9 +3,6 @@ from __future__ import absolute_import
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.html import escape
-from django.contrib import comments
-from django.contrib.comments import signals
-from django.contrib.comments.views.utils import confirmation_view, next_redirect
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, render_to_response
 from django.views.decorators.csrf import csrf_protect
@@ -48,7 +45,9 @@ def edit(request, comment_id, next=None):
         comment
             the `comments.comment` object to be edited.
     """
-    comment = get_object_or_404(comments.get_model(), pk=comment_id, site__pk=settings.SITE_ID)
+    comment = get_object_or_404(
+        comments_extension.django_comments.get_model(), pk=comment_id, site__pk=settings.SITE_ID
+    )
     
     # Make sure user has correct permissions to change the comment,
     # or return a 401 Unauthorized error.
@@ -67,13 +66,13 @@ def edit(request, comment_id, next=None):
     next = data.get("next", next)
     CommentEditForm = comments_extension.get_edit_form()
     form = CommentEditForm(data, instance=comment)
-    
+
     if form.security_errors():
         # NOTE: security hash fails!
         return CommentEditBadRequest(
             "The comment form failed security verification: %s" % \
                 escape(str(form.security_errors())))
-    
+
     # If there are errors, or if a preview is requested
     if form.errors or "preview" in data:
         app_label, model = (form.instance.content_type.app_label, form.instance.content_type.model)
@@ -95,7 +94,7 @@ def edit(request, comment_id, next=None):
     # Otherwise, try to save the comment and emit signals
     if form.is_valid():
         MODERATOR_EDITED = "moderator edited"
-        flag, created = comments.models.CommentFlag.objects.get_or_create(
+        flag, created = comments_extension.django_comments.models.CommentFlag.objects.get_or_create(
             comment = form.instance,
             user = request.user,
             flag = MODERATOR_EDITED
@@ -103,8 +102,8 @@ def edit(request, comment_id, next=None):
         
         form.instance.is_removed = False
         form.save()
-        
-        signals.comment_was_flagged.send(
+
+        comments_extension.django_comments.signals.comment_was_flagged.send(
             sender = comment.__class__,
             comment = comment,
             flag = flag,
@@ -112,14 +111,16 @@ def edit(request, comment_id, next=None):
             request = request
         )
         
-        return next_redirect(request, next, edit_done, c=comment.pk)
+        return comments_extension.django_comments.views.utils.next_redirect(
+            request, fallback=next or 'comments-comment-done', c=comment._get_pk_val()
+        )
     
     else:
         # If we got here, raise Bad Request error.
         return CommentEditBadRequest("Could not complete request!")
         
 
-edit_done = confirmation_view(
+edit_done = comments_extension.django_comments.views.utils.confirmation_view(
     template = "comments/edited.html",
     doc = 'Displays a "comment was edited" success page.'
 )
