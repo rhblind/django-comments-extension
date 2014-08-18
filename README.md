@@ -20,6 +20,13 @@ or install from the python package index
     
     $ pip install django-comments-extension
 
+As django.contrib.comments is now deprecated installation of django-contrib-comments is now recommend as follows:
+
+    $ pip install django-contrib-comments
+
+If django-contrib-comments is not installed django-comments-extension will attempt to fallback to
+django.contrib.comments.
+
 ### settings.py ###
 
     INSTALLED_APPS = (
