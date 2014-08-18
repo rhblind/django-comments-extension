@@ -1,12 +1,12 @@
 import time
 from django import forms
 from django.conf import settings
-from django.contrib.comments.models import Comment
-from django.contrib.comments.forms import COMMENT_MAX_LENGTH
 from django.utils.text import get_text_list
 from django.utils.translation import ungettext, ugettext, ugettext_lazy as _
 from django.forms.util import ErrorDict
 from django.utils.crypto import salted_hmac, constant_time_compare
+
+import comments_extension
 
 
 class CommentEditForm(forms.ModelForm):
@@ -28,7 +28,7 @@ class CommentEditForm(forms.ModelForm):
     user_email = forms.EmailField(label=_("Email address"))
     user_url = forms.URLField(label=_("URL"), required=False)
     comment = forms.CharField(label=_("Comment"), widget=forms.Textarea,
-                                    max_length=COMMENT_MAX_LENGTH)
+                                    max_length=comments_extension.django_comments.forms.COMMENT_MAX_LENGTH)
     
     # Security fields
     timestamp = forms.IntegerField(widget=forms.HiddenInput)
@@ -37,7 +37,7 @@ class CommentEditForm(forms.ModelForm):
                                                        "your comment will be treated as spam."))
     
     class Meta:
-        model = Comment
+        model = comments_extension.django_comments.models.Comment
         fields = ("user_name", "user_email", "user_url", "comment",
                   "timestamp", "security_hash", "honeypot")
 
