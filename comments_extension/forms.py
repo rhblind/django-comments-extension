@@ -6,6 +6,18 @@ from django.utils.translation import ungettext, ugettext, ugettext_lazy as _
 from django.forms.util import ErrorDict
 from django.utils.crypto import salted_hmac, constant_time_compare
 
+# Try to import django_comments otherwise fallback to the django contrib comments
+try:
+    from django_comments.forms import COMMENT_MAX_LENGTH
+    from django_comments.models import Comment
+except ImportError:
+    try:
+        from django.contrib.comments.forms import COMMENT_MAX_LENGTH
+        from django.contrib.comments.models import Comment
+    except ImportError:
+        raise ImportError('django-comments-extension requires django-contrib-comments to be installed or the deprecated'
+                          ' (as of django 1.6) django.contrib.comments.')
+
 import comments_extension
 
 
@@ -28,7 +40,7 @@ class CommentEditForm(forms.ModelForm):
     user_email = forms.EmailField(label=_("Email address"))
     user_url = forms.URLField(label=_("URL"), required=False)
     comment = forms.CharField(label=_("Comment"), widget=forms.Textarea,
-                                    max_length=comments_extension.django_comments.forms.COMMENT_MAX_LENGTH)
+                                    max_length=COMMENT_MAX_LENGTH)
     
     # Security fields
     timestamp = forms.IntegerField(widget=forms.HiddenInput)
@@ -37,7 +49,7 @@ class CommentEditForm(forms.ModelForm):
                                                        "your comment will be treated as spam."))
     
     class Meta:
-        model = comments_extension.django_comments.models.Comment
+        model = Comment
         fields = ("user_name", "user_email", "user_url", "comment",
                   "timestamp", "security_hash", "honeypot")
 
