@@ -2,13 +2,23 @@ from __future__ import absolute_import
 from django import template
 from django.template.loader import render_to_string
 
+# Try to import django_comments otherwise fallback to the django contrib comments
+try:
+    from django_comments.templatetags.comments import BaseCommentNode, CommentFormNode
+except ImportError:
+    try:
+        from django.contrib.comments.templatetags.comments import BaseCommentNode, CommentFormNode
+    except ImportError:
+        raise ImportError('django-comments-extension requires django-contrib-comments to be installed or the deprecated'
+                          ' (as of django 1.6) django.contrib.comments.')
+
 import comments_extension
 
 
 register = template.Library()
 
 
-class CommentEditFormNode(comments_extension.django_comments.templatetags.comments.CommentFormNode):
+class CommentEditFormNode(CommentFormNode):
     """
     Insert a form for the comment model into the context.
     """
@@ -20,7 +30,7 @@ class CommentEditFormNode(comments_extension.django_comments.templatetags.commen
             return None
         
 
-class RenderCommentEditFormNode(comments_extension.django_comments.templatetags.comments.CommentFormNode):
+class RenderCommentEditFormNode(CommentFormNode):
     """
     Class method to parse render_comment_edit_form and return a Node
     prefilled with existing data.
@@ -40,7 +50,7 @@ class RenderCommentEditFormNode(comments_extension.django_comments.templatetags.
         # {% render_comment_form for app.models pk %}
         elif len(tokens) == 4:
             return cls(
-                ctype = comments_extension.django_comments.templatetags.comments.BaseCommentNode.lookup_content_type(tokens[2], tokens[0]),
+                ctype = BaseCommentNode.lookup_content_type(tokens[2], tokens[0]),
                 object_pk_expr = parser.compile_filter(tokens[3])
             )
     

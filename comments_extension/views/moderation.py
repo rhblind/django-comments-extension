@@ -10,6 +10,22 @@ from django.views.decorators.http import require_POST
 from django.template.loader import render_to_string
 from django.template.context import RequestContext
 
+# Try to import django_comments otherwise fallback to the django contrib comments
+try:
+    from django_comments import get_model
+    from django_comments.models import CommentFlag
+    from django_comments.signals import comment_was_flagged
+    from django_comments.view import utils
+except ImportError:
+    try:
+        from django.contrib.comments import get_model
+        from django.contrib.comments.models import CommentFlag
+        from django.contrib.comments.signals import comment_was_flagged
+        from django.contrib.comments.view import utils
+    except ImportError:
+        raise ImportError('django-comments-extension requires django-contrib-comments to be installed or the deprecated'
+                          ' (as of django 1.6) django.contrib.comments.')
+
 import comments_extension
 
 
@@ -46,7 +62,7 @@ def edit(request, comment_id, next=None):
             the `comments.comment` object to be edited.
     """
     comment = get_object_or_404(
-        comments_extension.django_comments.get_model(), pk=comment_id, site__pk=settings.SITE_ID
+        get_model(), pk=comment_id, site__pk=settings.SITE_ID
     )
     
     # Make sure user has correct permissions to change the comment,
@@ -94,7 +110,7 @@ def edit(request, comment_id, next=None):
     # Otherwise, try to save the comment and emit signals
     if form.is_valid():
         MODERATOR_EDITED = "moderator edited"
-        flag, created = comments_extension.django_comments.models.CommentFlag.objects.get_or_create(
+        flag, created = CommentFlag.objects.get_or_create(
             comment = form.instance,
             user = request.user,
             flag = MODERATOR_EDITED
@@ -103,7 +119,7 @@ def edit(request, comment_id, next=None):
         form.instance.is_removed = False
         form.save()
 
-        comments_extension.django_comments.signals.comment_was_flagged.send(
+        comment_was_flagged.send(
             sender = comment.__class__,
             comment = comment,
             flag = flag,
@@ -111,7 +127,7 @@ def edit(request, comment_id, next=None):
             request = request
         )
         
-        return comments_extension.django_comments.views.utils.next_redirect(
+        return utils.next_redirect(
             request, fallback=next or 'comments-comment-done', c=comment._get_pk_val()
         )
     
@@ -120,7 +136,7 @@ def edit(request, comment_id, next=None):
         return CommentEditBadRequest("Could not complete request!")
         
 
-edit_done = comments_extension.django_comments.views.utils.confirmation_view(
+edit_done = utils.confirmation_view(
     template = "comments/edited.html",
     doc = 'Displays a "comment was edited" success page.'
 )
