@@ -15,13 +15,13 @@ try:
     from django_comments import get_model
     from django_comments.models import CommentFlag
     from django_comments.signals import comment_was_flagged
-    from django_comments.view import utils
+    from django_comments.views import utils
 except ImportError:
     try:
         from django.contrib.comments import get_model
         from django.contrib.comments.models import CommentFlag
         from django.contrib.comments.signals import comment_was_flagged
-        from django.contrib.comments.view import utils
+        from django.contrib.comments.views import utils
     except ImportError:
         raise ImportError('django-comments-extension requires django-contrib-comments to be installed or the deprecated'
                           ' (as of django 1.6) django.contrib.comments.')
